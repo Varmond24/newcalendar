@@ -1,0 +1,21 @@
+<% layout('layout') %>
+<div class="card">
+  <h2><%= t('leaderboard.title') %></h2>
+  <p class="muted"><%= t('leaderboard.subtitle') %></p>
+  <div style="margin-top:10px;">
+    <% if (rows.length === 0) { %>
+      <p class="muted"><%= t('leaderboard.empty') %></p>
+    <% } else { %>
+      <div class="grid" style="grid-template-columns: 40px 1fr 120px;">
+        <div class="muted"><%= t('leaderboard.rank') %></div>
+        <div class="muted"><%= t('leaderboard.player') %></div>
+        <div class="muted"><%= t('leaderboard.score') %></div>
+        <% rows.forEach((r, i) => { %>
+          <div><%= i + 1 %></div>
+          <div><%= r.name %></div>
+          <div><strong><%= r.score %></strong></div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</div>

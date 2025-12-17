@@ -1,0 +1,51 @@
+<% layout('layout') %>
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1><%= t ? t('auth.login.title') : 'Sign in' %></h1>
+      <p class="muted">
+        <%= t ? t('auth.login.subtitle') : 'Log in to open questions, collect points and see your place in the leaderboard.' %>
+      </p>
+    </div>
+
+    <% if (err) { %>
+      <div class="toast warn"><%= err %></div>
+    <% } %>
+
+    <form method="post" action="/login" class="auth-form">
+      <div class="field">
+        <label for="email"><%= t ? t('auth.login.email') : 'Email' %></label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          autocomplete="email"
+          placeholder="you@example.com"
+        />
+      </div>
+
+      <div class="field">
+        <label for="password"><%= t ? t('auth.login.password') : 'Password' %></label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          autocomplete="current-password"
+          placeholder="••••••••"
+        />
+      </div>
+
+      <button class="btn primary full-width">
+        <%= t ? t('auth.login.button') : 'Sign in' %>
+      </button>
+    </form>
+
+    <p class="auth-footer-text">
+      <%= t ? t('auth.login.noAccount') : 'Don’t have an account yet?' %>
+      <a href="/register"><%= t ? t('auth.register.title') : 'Register' %></a>
+    </p>
+  </div>
+</div>

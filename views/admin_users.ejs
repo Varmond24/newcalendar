@@ -1,0 +1,39 @@
+<% layout('layout') %>
+
+<div class="card">
+  <h2>Users (admin)</h2>
+  <p class="muted">Total: <%= rows.length %></p>
+  <p class="muted">
+    <a href="/admin/winners.csv">Download winners.csv</a> ·
+    <a href="/admin/users.csv">Download users.csv</a>
+  </p>
+
+  <div style="margin-top:10px; overflow-x:auto;">
+      <% if (rows.length === 0) { %>
+      <p class="muted">No users yet.</p>
+    <% } else { %>
+      <table style="width:100%; border-collapse:collapse; font-size:14px;">
+        <thead>
+          <tr>
+            <th style="border-bottom:1px solid #29455f; text-align:left; padding:6px;">#</th>
+            <th style="border-bottom:1px solid #29455f; text-align:left; padding:6px;">Name</th>
+            <th style="border-bottom:1px solid #29455f; text-align:left; padding:6px;">Email</th>
+            <th style="border-bottom:1px solid #29455f; text-align:left; padding:6px;">Score</th>
+            <th style="border-bottom:1px solid #29455f; text-align:left; padding:6px;">Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% rows.forEach((u, i) => { %>
+            <tr>
+              <td style="border-bottom:1px solid #1c3147; padding:4px 6px;"><%= i + 1 %></td>
+              <td style="border-bottom:1px solid #1c3147; padding:4px 6px;"><%= u.name %></td>
+              <td style="border-bottom:1px solid #1c3147; padding:4px 6px;"><%= u.email %></td>
+              <td style="border-bottom:1px solid #1c3147; padding:4px 6px;"><%= u.score %></td>
+              <td style="border-bottom:1px solid #1c3147; padding:4px 6px;"><%= u.created_at %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+</div>

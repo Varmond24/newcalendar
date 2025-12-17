@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="<%= lng %>">
+  <head>
+    <meta charset="utf-8" />
+    <title><%= t('app.title') %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    
+  <meta name="turbo-cache-control" content="no-cache">
+      <link rel="stylesheet" href="/styles.css" />
+<link rel="stylesheet" href="/theme-legacy.css" />
+
+  </head>
+  <body class="<%= (typeof bodyClass !== 'undefined' ? bodyClass : '') %>">
+
+<header class="container">
+  <div class="nav">
+    <div class="brand">
+      <a href="/" style="display:flex; align-items:center; gap:10px;">
+        <img src="/images/ASBlogo3.png" alt="ASB" class="brand-img" />
+        <span>Christmas Calendar 2025</span>
+      </a>
+    </div>
+
+    <nav class="navlinks" id="navMenu">
+      <a href="/">Home</a>
+      <a href="/questions">Questions</a>
+      <a href="/leaderboard">Leaderboard</a>
+
+      <!-- оставляем только этот переключатель языка -->
+      <div class="lang">
+        <a href="/lang/en" class="<%= lng==='en'?'active':'' %>">EN</a>
+        <a href="/lang/ka" class="<%= lng==='ka'?'active':'' %>">KA</a>
+        <a href="/lang/uk" class="<%= lng==='uk'?'active':'' %>">UK</a>
+      </div>
+
+      <% if (user) { %>
+        <span class="muted">Hello, <%= user.name %> • <%= user.score %> pts</span>
+        <form method="post" action="/logout" class="inline">
+          <button class="btn small ghost">Log out</button>
+        </form>
+      <% } else { %>
+        <a href="/login" class="btn small ghost">Log in</a>
+        <a href="/register" class="btn small secondary">Register</a>
+      <% } %>
+    </nav>
+
+    <button class="icon-btn burger" id="menuToggle" aria-label="Menu" aria-expanded="false" aria-controls="navMenu">☰</button>
+  </div>
+
+      <div class="lights">
+    <% for (let i=0; i<24; i++) { %><span class="bulb"></span><% } %>
+  </div>
+
+    <div class="toolbar" style="margin: 8px 0 14px;">
+    <button class="toggle" id="snowToggle" title="Snow">
+      <span class="dot"></span><span>Snow</span> ❄️
+    </button>
+    <button class="toggle" id="plList" title="Playlist">
+      <span class="dot"></span><span>Playlist</span> 📜
+    </button>
+  </div>
+</header>
+
+    <main class="container">
+      <%- body %>
+    </main>
+
+    <!-- Persistent Player -->
+    <div id="playerBar" class="player-bar" data-turbo-permanent>
+      <div class="controls">
+        <button id="plPrev" class="icon-btn" title="Prev">⏮️</button>
+        <button id="plPlay" class="icon-btn play" title="Play/Pause">▶️</button>
+        <button id="plNext" class="icon-btn" title="Next">⏭️</button>
+      </div>
+
+      <div class="meta">
+        <div id="plTitle" class="title">…</div>
+        <div class="timing">
+          <span id="plCur">0:00</span>
+          <div id="plProgress" class="progress"><div id="plBar" class="bar"></div></div>
+          <span id="plDur">0:00</span>
+        </div>
+      </div>
+
+      <div class="right">
+        <button id="plShuffle" class="icon-btn" title="Shuffle">🔀</button>
+        <button id="plRepeat" class="icon-btn" data-mode="all" title="Repeat">🔁</button>
+        <input id="plVolume" type="range" min="0" max="100" step="1" class="volume" title="Volume" />
+      </div>
+
+      <audio id="bgm" preload="metadata" playsinline></audio>
+    </div>
+
+    <div id="plDrawer" class="playlist-drawer" data-turbo-permanent>
+      <div class="drawer-head">
+        <strong><%= t('ui.playlist') %></strong>
+        <button id="plClose" class="icon-btn small" title="Close">✖</button>
+      </div>
+      <ul id="plDrawerList" class="pl-list"></ul>
+    </div>
+<script src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.4/dist/turbo.es2017-umd.js" defer></script>
+    <script src="/snow.js" defer></script>
+    <script src="/app.js" defer></script>
+<!-- Question Modal (persistent) -->
+<div id="q-modal" class="modal" data-turbo-permanent hidden>
+  <div class="modal-backdrop" data-close="1"></div>
+  <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="q-modal-title">
+    <turbo-frame id="q-modal-frame"></turbo-frame>
+  </div>
+</div>
+  </body>
+</html>

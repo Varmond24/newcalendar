@@ -1,0 +1,123 @@
+{
+  "app": { "title": "Christmas Calendar 2025" },
+  "nav": {
+    "home": "Home",
+    "questions": "Questions",
+    "leaderboard": "Leaderboard",
+    "login": "Log in",
+    "register": "Register",
+    "logout": "Log out",
+    "signedIn": "Hello, {{name}} • {{score}} pts"
+  },
+  "ui": { "snow": "Snow", "playlist": "Playlist" },
+  "index": {
+    "title": "Christmas Calendar 2025",
+    "subtitle": "Open December days, answer and earn points.",
+    "status": "Today's day: {{day}}",
+    "dev": "(DEV mode: all days available)",
+    "ctaLoggedOut": "To play and appear in the leaderboard, please register or log in.",
+    "ctaLoggedIn": "Go to Questions, pick a day and submit your answer."
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Log in to open questions, collect points and see your place in the leaderboard.",
+      "email": "Email",
+      "password": "Password",
+      "button": "Sign in",
+      "noAccount": "Don’t have an account yet?"
+    },
+    "register": {
+      "title": "Create account",
+      "subtitle": "Register to join the Christmas calendar, answer daily questions and compete with others.",
+      "name": "Name",
+      "namePlaceholder": "Your name",
+      "email": "Email",
+      "password": "Password",
+      "passwordHint": "At least 6 characters.",
+      "button": "Create account",
+      "haveAccount": "Already have an account?"
+    }
+    ,
+    "invalidCredentials": "Invalid email or password",
+    "errors": {
+      "fillAll": "Please fill in all fields",
+      "passwordShort": "Password must be at least 6 characters",
+      "emailTaken": "This email is already registered",
+      "userCreateFail": "Failed to create user"
+    }
+  },
+  "toasts": {
+    "loginRequired": "Please sign in first.",
+    "registeredOk": "Registration successful! Please sign in.",
+    "welcomeBack": "Welcome back, {{name}}!",
+    "loggedOut": "You have signed out.",
+    "dayInvalid": "Invalid day.",
+    "dayLocked": "This day is not unlocked yet!",
+    "questionNotFound": "Question not found",
+    "answerCorrect": "Correct! +1 point",
+    "answerWrong": "Wrong answer. Try again!",
+    "alreadyCounted": "This day is already counted! Nice!",
+    "selectOption": "Please select one option."
+  },
+  "questions": {
+    "title": "Daily Questions",
+    "available": "Available days: {{count}} of 25",
+    "today": "Today's day: {{n}}",
+    "day": "Day {{n}}",
+    "locked": "Locked",
+    "enterAnswer": "Your answer",
+    "submit": "Submit",
+    "alreadyAnswered": "Answer already counted! 🎉",
+    "notAvailable": "This day is not available or not found.",
+    "alreadySubmitted": "You have already submitted an answer for this day. Only one attempt is allowed.",
+    "signInToAnswer": "Sign in to answer",
+    "attemptUsed": "Attempt used",
+    "oneAttemptOnly": "One attempt",
+    "completed": "Completed",
+    "loginToAnswer": "Please log in to submit an answer."
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "subtitle": "Top players by score",
+    "empty": "Empty for now. Be the first!",
+    "rank": "#",
+    "player": "Player",
+    "score": "Score"
+  },
+
+
+
+  "q": {
+    "1":  { "text": "How many days are in December?", "options": ["28","30","31","29"] },
+    "2":  { "text": "Which month comes after December?", "options": ["January","March","November","May"] },
+    "3":  { "text": "How many hours are in a day?", "options": ["12","48","24","36"] },
+    "4":  { "text": "How many sides does a snowflake have?", "options": ["4","5","6","8"] },
+    "5":  { "text": "Which is NOT a winter month (Northern Hemisphere)?", "options": ["December","January","February","June"] },
+    "6":  { "text": "Which drink is often served warm in winter?", "options": ["Lemonade","Hot chocolate","Iced coffee","Smoothie"] },
+    "7":  { "text": "What color are most evergreen needles?", "options": ["Blue","Green","Orange","Purple"] },
+    "8":  { "text": "Which country is in the Caucasus?", "options": ["Georgia","Spain","Japan","Brazil"] },
+    "9":  { "text": "What is 12 + 13?", "options": ["24","25","26","23"] },
+    "10": { "text": "Which is a snow activity?", "options": ["Swimming","Sledding","Surfing","Gardening"] },
+    "11": { "text": "Which instrument measures temperature?", "options": ["Barometer","Thermometer","Altimeter","Compass"] },
+    "12": { "text": "What is the last day of the year?", "options": ["December 25","December 30","December 31","January 1"] },
+    "13": { "text": "Which symbol is often placed on top of a Christmas tree?", "options": ["Crescent","Star","Clover","Anchor"] },
+    "14": { "text": "Which of these is a popular Christmas carol?", "options": ["Moonlight Sonata","Jingle Bells","Despacito","Canon in D"] },
+    "15": { "text": "Which one is NOT a season?", "options": ["Winter","Spring","Holiday","Autumn"] },
+    "16": { "text": "Which animal hibernates in winter?", "options": ["Bear","Horse","Dolphin","Parrot"] },
+    "17": { "text": "What is the capital of Georgia?", "options": ["Tbilisi","Batumi","Kutaisi","Rustavi"] },
+    "18": { "text": "Which device keeps you warm?", "options": ["Refrigerator","Heater","Fan","Freezer"] },
+    "19": { "text": "Which fruit is often associated with winter holidays?", "options": ["Watermelon","Strawberry","Tangerine","Pineapple"] },
+    "20": { "text": "Which of these is NOT a traffic light color?", "options": ["Red","Yellow","Green","Blue"] },
+    "21": { "text": "How many days are there in a week?", "options": ["5","6","7","8"] },
+    "22": { "text": "What is frozen water called?", "options": ["Ice","Steam","Cloud","Fog"] },
+    "23": { "text": "How many months are there in a year?", "options": ["10","11","12","13"] },
+    "24": { "text": "Which continent is Ukraine in?", "options": ["Europe","Asia","Africa","Australia"] },
+    "25": { "text": "Which star is at the center of our Solar System?", "options": ["Polaris","The Sun","Sirius","Betelgeuse"] }
+  },
+  
+  "common": { "or": "or" }
+
+
+}
+

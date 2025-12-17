@@ -1,0 +1,69 @@
+<% layout('layout') %>
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1><%= t ? t('auth.register.title') : 'Create account' %></h1>
+      <p class="muted">
+        <%= t ? t('auth.register.subtitle') : 'Register to join the Christmas calendar, answer daily questions and compete with others.' %>
+      </p>
+    </div>
+
+    <% if (err) { %>
+      <div class="toast warn"><%= err %></div>
+    <% } %>
+
+    <form method="post" action="/register" class="auth-form">
+      <div class="field">
+        <label for="name"><%= t ? t('auth.register.name') : 'Name' %></label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          required
+          value="<%= (form && form.name) || '' %>"
+          autocomplete="name"
+          placeholder="<%= t ? t('auth.register.namePlaceholder') : 'Your name' %>"
+        />
+      </div>
+
+      <div class="field">
+        <label for="email"><%= t ? t('auth.register.email') : 'Email' %></label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          value="<%= (form && form.email) || '' %>"
+          autocomplete="email"
+          placeholder="you@example.com"
+        />
+      </div>
+
+      <div class="field">
+        <label for="password"><%= t ? t('auth.register.password') : 'Password' %></label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          minlength="6"
+          autocomplete="new-password"
+          placeholder="••••••••"
+        />
+        <p class="hint">
+          <%= t ? t('auth.register.passwordHint') : 'At least 6 characters.' %>
+        </p>
+      </div>
+
+      <button class="btn primary full-width">
+        <%= t ? t('auth.register.button') : 'Create account' %>
+      </button>
+    </form>
+
+    <p class="auth-footer-text">
+      <%= t ? t('auth.register.haveAccount') : 'Already have an account?' %>
+      <a href="/login"><%= t ? t('auth.login.title') : 'Sign in' %></a>
+    </p>
+  </div>
+</div>

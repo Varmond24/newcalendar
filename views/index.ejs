@@ -1,0 +1,22 @@
+<% layout('layout') %>
+<div class="card">
+  <h1 class="center">🎄 <%= t('index.title') %></h1>
+  <p class="center muted"><%= t('index.subtitle') %></p>
+  <hr class="sep" />
+  <div>
+    <h3><%= t('index.title') %></h3>
+    <p>
+      <% const todayDayValue = typeof todayDay !== 'undefined' ? todayDay : maxDay; %>
+      <%= t('index.status', { day: todayDayValue }) %>
+      <% if (dev) { %> <span class="muted"><%= t('index.dev') %></span> <% } %>
+    </p>
+  </div>
+  <hr class="sep" />
+  <div>
+    <% if (!user) { %>
+      <p><%= t('index.ctaLoggedOut') %></p>
+    <% } else { %>
+      <p><%= t('index.ctaLoggedIn') %></p>
+    <% } %>
+  </div>
+</div>

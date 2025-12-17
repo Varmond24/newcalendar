@@ -1,0 +1,44 @@
+<turbo-frame id="q-modal-frame">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3 id="q-modal-title">
+        <% if (selected && dayParam) { %>Day <%= selected.day %><% } else { %>Not available<% } %>
+      </h3>
+      <button type="button" class="icon-btn small modal-close" aria-label="Close">✖</button>
+    </div>
+
+    <div class="modal-body">
+      <% if (!dayParam || !selected) { %>
+        <p class="muted">This day is not available or not found.</p>
+      <% } else { %>
+        <% if (localToast) { %>
+          <div class="toast <%= localToast.type %>"><%= localToast.text %></div>
+        <% } %>
+
+        <p style="margin-bottom:10px;"><%= selected.text %></p>
+
+        <% if (!user) { %>
+          <div class="toast warn">
+            Please log in to submit an answer. <a href="/login">Log in</a> or <a href="/register">Register</a>.
+          </div>
+        <% } else if (attempted) { %>
+          <% if (alreadyCorrect) { %>
+            <div class="toast ok">Answer already counted! 🎉</div>
+          <% } else { %>
+            <div class="toast warn">You have already submitted an answer for this day. Only one attempt is allowed.</div>
+          <% } %>
+        <% } else { %>
+          <form method="post" action="/questions/submit" data-turbo-frame="q-modal-frame" style="max-width:420px;">
+            <input type="hidden" name="_frame" value="q-modal-frame" />
+            <input type="hidden" name="day" value="<%= selected.day %>" />
+            <div>
+              <label>Your answer</label>
+              <input type="text" name="answer" placeholder="Enter your answer" required />
+            </div>
+            <button class="btn">Submit</button>
+          </form>
+        <% } %>
+      <% } %>
+    </div>
+  </div>
+</turbo-frame>
