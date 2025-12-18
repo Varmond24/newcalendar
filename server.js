@@ -137,6 +137,7 @@ async function initDb() {
 
 // 5. App Setup
 const app = express();
+app.set('trust proxy', 1);
 
 app.use(helmet({
   contentSecurityPolicy: {
