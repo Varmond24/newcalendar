@@ -76,8 +76,8 @@
   <div class="grid" style="margin: 16px 0 6px;">
     <% const _todayDay = typeof todayDay !== 'undefined' ? todayDay : maxDay; %>
     <% for (let d = 1; d <= 25; d++) { %>
-      <% const locked = d > maxDay || (d < _todayDay && _todayDay); const st = (statusByDay && statusByDay[d]) || {attempted:false, correct:false}; %>
-      <div class="day <%= locked ? 'locked' : '' %>">
+      <% const locked = d > maxDay; const isToday = (_todayDay && d === _todayDay); const st = (statusByDay && statusByDay[d]) || {attempted:false, correct:false}; %>
+<div class="day <%= locked ? 'locked' : '' %> <%= isToday ? 'highlighted' : '' %>">
         <% if (!locked) { %>
           <a class="legacy-pill" href="/questions?day=<%= d %>">
             <%= t ? t('questions.day', { n: d }) : `Day ${d}` %>
