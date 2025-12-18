@@ -9,7 +9,7 @@
   </p>
 
   <div style="margin-top:10px; overflow-x:auto;">
-      <% if (rows.length === 0) { %>
+    <% if (rows.length === 0) { %>
       <p class="muted">No users yet.</p>
     <% } else { %>
       <table style="width:100%; border-collapse:collapse; font-size:14px;">
@@ -20,16 +20,35 @@
             <th style="border-bottom:1px solid #29455f; text-align:left; padding:6px;">Email</th>
             <th style="border-bottom:1px solid #29455f; text-align:left; padding:6px;">Score</th>
             <th style="border-bottom:1px solid #29455f; text-align:left; padding:6px;">Created</th>
+            <th style="border-bottom:1px solid #29455f; text-align:left; padding:6px;">Actions</th>
           </tr>
         </thead>
+
         <tbody>
           <% rows.forEach((u, i) => { %>
+            <% const isAdminEmail = (typeof ADMINS !== 'undefined') && u.email && ADMINS.includes(String(u.email).toLowerCase()); %>
             <tr>
               <td style="border-bottom:1px solid #1c3147; padding:4px 6px;"><%= i + 1 %></td>
               <td style="border-bottom:1px solid #1c3147; padding:4px 6px;"><%= u.name %></td>
               <td style="border-bottom:1px solid #1c3147; padding:4px 6px;"><%= u.email %></td>
               <td style="border-bottom:1px solid #1c3147; padding:4px 6px;"><%= u.score %></td>
               <td style="border-bottom:1px solid #1c3147; padding:4px 6px;"><%= u.created_at %></td>
+
+              <td style="border-bottom:1px solid #1c3147; padding:4px 6px;">
+                <% if (isAdminEmail) { %>
+                  <span class="muted">Admin</span>
+                <% } else { %>
+                  <form method="post"
+                        action="/admin/users/<%= u.id %>/delete"
+                        class="delete-form"
+                        data-email="<%= u.email %>"
+                        style="display:inline;">
+                    <input type="hidden" name="csrfToken" value="<%= csrfToken %>" />
+                    <input type="hidden" name="confirmEmail" value="" />
+                    <button type="submit" class="btn small ghost">Delete</button>
+                  </form>
+                <% } %>
+              </td>
             </tr>
           <% }) %>
         </tbody>
@@ -37,3 +56,5 @@
     <% } %>
   </div>
 </div>
+
+<script src="/admin-users.js" defer></script>
