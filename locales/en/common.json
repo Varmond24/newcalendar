@@ -116,7 +116,10 @@
     "25": { "text": "Which star is at the center of our Solar System?", "options": ["Polaris","The Sun","Sirius","Betelgeuse"] }
   },
   
-  "common": { "or": "or" }
+"common": {
+  "or": "or",
+  "visits": "Visits on this page"
+}
 
 
 }
