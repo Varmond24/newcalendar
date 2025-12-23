@@ -174,6 +174,38 @@ i18next
   });
 app.use(i18nextMiddleware.handle(i18next));
 
+// --- Page Counter Middleware (Page + Lang) ---
+app.use(async (req, res, next) => {
+  // Игнорируем API, админку, статику (файлы с точкой)
+  if (req.method !== 'GET' || 
+      req.path.startsWith('/api') || 
+      req.path.startsWith('/admin') || 
+      req.path.includes('.')) {
+    return next();
+  }
+
+  try {
+    // Формируем ключ: "url_lang" (например: "/_en", "/questions_ka")
+    const currentPath = req.path === '/' ? 'home' : req.path.replace(/\//g, '');
+    const currentLang = req.language || 'en';
+    const key = `${currentPath}_${currentLang}`;
+
+    // UPSERT: Вставляем 1, или если есть - увеличиваем
+    const r = await pool.query(`
+      INSERT INTO page_visits (page_key, count) VALUES ($1, 1)
+      ON CONFLICT (page_key) DO UPDATE 
+      SET count = page_visits.count + 1
+      RETURNING count
+    `, [key]);
+
+    res.locals.visits = r.rows[0]?.count || 1;
+  } catch (e) {
+    console.error('Counter error:', e);
+    res.locals.visits = 0;
+  }
+  next();
+});
+
 // Session (Postgres store)
 app.use(session({
   store: new PgSession({ pool, createTableIfMissing: true }),
