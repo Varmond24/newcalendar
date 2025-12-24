@@ -235,6 +235,7 @@ app.use((req, res, next) => {
   res.locals.lng = req.language || 'en';
   res.locals.path = req.path;
   res.locals.ADMINS = ADMINS;
+  res.locals.visits = res.locals.visits || 0;
   if (typeof res.locals.bodyClass === 'undefined') res.locals.bodyClass = '';
   
   next();
