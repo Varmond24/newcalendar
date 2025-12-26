@@ -75,7 +75,16 @@
     "attemptUsed": "Attempt used",
     "oneAttemptOnly": "One attempt",
     "completed": "Completed",
-    "loginToAnswer": "Please log in to submit an answer."
+    "loginToAnswer": "Please log in to submit an answer.",
+    "newYearDay": "{{day}} of {{month}}",
+    "dayTitle": "{{day}} of {{month}}",
+    "gridDay": "{{day}}",
+    "available_simple": "Open days: {{count}}",
+    "months": {
+    "12": "December",
+    "1": "January"
+  },
+  "dayTitleFormat": "{{day}} {{month}}"
   },
   "leaderboard": {
     "title": "Leaderboard",
@@ -113,7 +122,20 @@
     "22": { "text": "What is frozen water called?", "options": ["Ice","Steam","Cloud","Fog"] },
     "23": { "text": "How many months are there in a year?", "options": ["10","11","12","13"] },
     "24": { "text": "Which continent is Ukraine in?", "options": ["Europe","Asia","Africa","Australia"] },
-    "25": { "text": "Which star is at the center of our Solar System?", "options": ["Polaris","The Sun","Sirius","Betelgeuse"] }
+    "25": { "text": "Which star is at the center of our Solar System?", "options": ["Polaris","The Sun","Sirius","Betelgeuse"] },
+    "26": { "text": "What is traditionally given on Boxing Day?", "options": ["Boxes of food/gifts", "Punching gloves", "Trees", "Snowballs"] },
+    "27": { "text": "Which country celebrates New Year first?", "options": ["USA", "Georgia", "Japan", "Kiribati"] },
+    "28": { "text": "What brings good luck in Georgia on New Year?", "options": ["Breaking plates", "Mekvle (First Guest)", "Sleeping all day", "Cleaning shoes"] },
+    "29": { "text": "What is the main ingredient of Gozinaki?", "options": ["Sugar", "Chocolate", "Walnuts & Honey", "Flour"] },
+    "30": { "text": "Where does Santa Claus live?", "options": ["North Pole", "South Pole", "Hawaii", "Mars"] },
+    "31": { "text": "What time do we count down on New Year's Eve?", "options": ["10:00 PM", "11:00 PM", "11:30 PM", "Midnight"] },
+    "32": { "text": "What is Jan 1st called?", "options": ["Boxing Day", "New Year's Day", "Easter", "Halloween"] },
+    "33": { "text": "In Ukraine, what is 'Didukh' made of?", "options": ["Wheat sheaf", "Pine branches", "Plastic", "Flowers"] },
+    "34": { "text": "How many dishes are traditionally on the Ukrainian Christmas Eve table?", "options": ["7", "10", "12", "20"] },
+    "35": { "text": "What is the main sweet dish for Orthodox Christmas Eve?", "options": ["Pizza", "Kutia", "Burger", "Sushi"] },
+    "36": { "text": "When is Christmas celebrated in Georgia and Ukraine?", "options": ["Dec 25", "Jan 1", "Feb 14", "Jan 7"] },
+    "37": { "text": "What do people light in windows on Christmas night in Georgia?", "options": ["Candles", "Lasers", "Flashlights", "Fireworks"] },
+    "38": { "text": "What does 'Alilo' mean in Georgia?", "options": ["A dance", "A traditional food", "Christmas procession", "A game"] }
   },
   
 "common": {
