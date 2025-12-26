@@ -1,92 +1,131 @@
 <% layout('layout') %>
-<div class="card">
-  <h2><%= t ? t('questions.title') : 'Daily Questions' %></h2>
-  <p class="muted"><%= t ? t('questions.today', { n: (typeof todayDay !== 'undefined' ? todayDay : maxDay) }) : `Today's day: ${typeof todayDay !== 'undefined' ? todayDay : maxDay}` %></p>
 
-  <!-- Верхняя карточка текущего (или выбранного) дня -->
-  <% if (selected) { %>
-  <div class="callout">
-    <div class="callout-head">
-      <h3 style="margin:0;"><%= t ? t('questions.day', { n: selected.day }) : `Day ${selected.day}` %></h3>
-      <div class="chips">
-  <% if (!user) { %>
-    <span class="chip info"><%= t ? t('questions.signInToAnswer') : 'Sign in to answer' %></span>
-  <% } else if (attempted) { %>
-    <% if (alreadyCorrect) { %>
-      <span class="chip ok"><%= t ? t('questions.completed') : 'Completed' %></span>
-    <% } else { %>
-      <span class="chip warn"><%= t ? t('questions.attemptUsed') : 'Attempt used' %></span>
-    <% } %>
-  <% } else { %>
-    <span class="chip info"><%= t ? t('questions.oneAttemptOnly') : 'One attempt' %></span>
-  <% } %>
-</div>
-    </div>
+<!-- Хелпер для форматирования даты -->
+<%
+  function getDayInfo(dayNum) {
+    let d, m;
+    if (dayNum <= 31) {
+      d = dayNum; m = '12'; // Декабрь (26..31)
+    } else {
+      d = dayNum - 31; m = '1'; // Январь (32..38 -> 1..7)
+    }
+    const monthName = t ? t(`questions.months.${m}`) : (m === '12' ? 'December' : 'January');
+    const fullDate = t ? t('questions.dayTitleFormat', { day: d, month: monthName }) : `${d} ${monthName}`;
+    return { day: d, month: monthName, full: fullDate };
+  }
+%>
 
-    <% if (toast) { %><div class="toast <%= toast.type %>"><%= toast.text %></div><% } %>
-
+<div class="card bg-calendar" style="background-clip: padding-box; padding: 12px;">
+  <h2><%= t ? t('questions.title') : 'Holiday Calendar' %></h2>
+  
+  <p class="muted">
+    <!-- Показываем, сколько открыто из 13 новых дней -->
     <% 
-      // Текст и варианты из i18n; фолбэк — арифметика как раньше
-      const keyBase = qKey || ('q.' + selected.day);
-      const qText = t ? t(keyBase + '.text') : ('How much is ' + selected.day + ' + ' + selected.day + '?');
-      let opts = t ? t(keyBase + '.options', { returnObjects: true }) : null;
-      if (!Array.isArray(opts) || opts.length !== 4) {
-        // fallbackOptions сервер уже передаёт
-        opts = (fallbackOptions && fallbackOptions.length === 4) 
-          ? fallbackOptions 
-          : [ (selected.day*2 - 1) + '', (selected.day*2) + '', (selected.day*2 + 1) + '', (selected.day*2 + 2) + '' ];
-      }
+       const openedCount = (maxDay >= 26) ? (maxDay - 25) : 0;
     %>
+    <%= t ? t('questions.available_simple', { count: openedCount }) : `Open: ${openedCount}` %>
+  </p>
 
-    <p style="margin:8px 0 14px;"><%= qText %></p>
+  <!-- КАРТОЧКА ВОПРОСА -->
+  <% if (selected && selected.day >= 26) { %>
+    <% const dateInfo = getDayInfo(selected.day); %>
+    <div class="callout">
+      <div class="callout-head">
+        <h3 style="margin:0;"><%= dateInfo.full %></h3>
+        <div class="chips">
+          <% if (!user) { %>
+            <span class="chip info"><%= t ? t('questions.signInToAnswer') : 'Sign in' %></span>
+          <% } else if (attempted) { %>
+            <% if (alreadyCorrect) { %>
+              <span class="chip ok"><%= t ? t('questions.completed') : 'Completed' %></span>
+            <% } else { %>
+              <span class="chip warn"><%= t ? t('questions.attemptUsed') : 'Used' %></span>
+            <% } %>
+          <% } else { %>
+            <span class="chip info"><%= t ? t('questions.oneAttemptOnly') : '1 attempt' %></span>
+          <% } %>
+        </div>
+      </div>
 
-    <% if (!user) { %>
-<div class="toast warn">
-  <%= t ? t('questions.loginToAnswer') : 'Please log in to submit an answer.' %>
-  <a href="/login"><%= t ? t('nav.login') : 'Log in' %></a> <%= t ? t('common.or') : 'or' %>
-  <a href="/register"><%= t ? t('nav.register') : 'Register' %></a>.
-</div>
+      <% if (toast) { %><div class="toast <%= toast.type %>"><%= toast.text %></div><% } %>
 
-    <% } else if (!attempted) { %>
-      <form method="post" action="/questions/submit" style="max-width:480px;">
-        <input type="hidden" name="day" value="<%= selected.day %>" />
-        <fieldset style="border:none; padding:0; margin:0 0 10px;">
-          <% opts.forEach((opt, i) => { %>
-            <label style="display:flex; gap:8px; align-items:center; padding:8px 10px; border:1px solid #2b415b; border-radius:10px; margin-bottom:8px; background:#0f2336;">
-              <input type="radio" name="choice" value="<%= i %>" required />
-              <span><%= opt %></span>
-            </label>
-          <% }) %>
-        </fieldset>
-        <button class="btn">Submit</button>
-      </form>
+      <% 
+        const keyBase = qKey || ('q.' + selected.day);
+        const qText = t ? t(keyBase + '.text') : ('Question ' + selected.day);
+        let opts = t ? t(keyBase + '.options', { returnObjects: true }) : null;
+        if (!Array.isArray(opts) || opts.length !== 4) opts = fallbackOptions || [];
+      %>
 
-<% } else { %>
-  <% if (alreadyCorrect) { %>
-    <div class="toast ok"><%= t ? t('questions.alreadyAnswered') : 'Answer already counted! 🎉' %></div>
-  <% } else { %>
-    <div class="toast warn"><%= t ? t('questions.alreadySubmitted') : 'You have already submitted an answer for this day. Only one attempt is allowed.' %></div>
+      <p style="margin:8px 0 14px;"><%= qText %></p>
+
+      <% if (!user) { %>
+        <div class="toast warn">
+          <%= t ? t('questions.loginToAnswer') : 'Log in.' %>
+          <a href="/login"><%= t ? t('nav.login') : 'Log in' %></a>.
+        </div>
+      <% } else if (!attempted) { %>
+        <form method="post" action="/questions/submit" style="max-width:480px;">
+          <input type="hidden" name="day" value="<%= selected.day %>" />
+          <fieldset style="border:none; padding:0; margin:0 0 10px;">
+            <% opts.forEach((opt, i) => { %>
+              <label style="display:flex; gap:8px; align-items:center; padding:8px 10px; border:1px solid #2b415b; border-radius:10px; margin-bottom:8px; background:#0f2336;">
+                <input type="radio" name="choice" value="<%= i %>" required />
+                <span><%= opt %></span>
+              </label>
+            <% }) %>
+          </fieldset>
+          <button class="btn"><%= t ? t('questions.submit') : 'Submit' %></button>
+        </form>
+      <% } else { %>
+        <div class="toast <%= alreadyCorrect ? 'ok' : 'warn' %>">
+          <%= alreadyCorrect ? (t ? t('questions.alreadyAnswered') : 'Correct!') : (t ? t('questions.alreadySubmitted') : 'Attempt used.') %>
+        </div>
+      <% } %>
+    </div>
+  <% } else if (dayParam && dayParam >= 26) { %>
+    <div class="toast warn"><%= t ? t('questions.notAvailable') : 'Not available' %></div>
   <% } %>
-<% } %>
-<% } else if (dayParam) { %>
-  <div class="toast warn"><%= t ? t('questions.notAvailable') : 'This day is not available or not found.' %></div>
-<% } %>
 
-  <!-- Сетка дней со статусами -->
-  <div class="grid" style="margin: 16px 0 6px;">
-    <% const _todayDay = typeof todayDay !== 'undefined' ? todayDay : maxDay; %>
-    <% for (let d = 1; d <= 25; d++) { %>
-      <% const locked = d > maxDay; const isToday = (_todayDay && d === _todayDay); const st = (statusByDay && statusByDay[d]) || {attempted:false, correct:false}; %>
-<div class="day <%= locked ? 'locked' : '' %> <%= isToday ? 'highlighted' : '' %>">
+  <!-- СЕТКА ДНЕЙ (ID 26..38) -->
+  <div class="grid" style="margin: 12px 0 16px; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));">
+    <% 
+      const _todayDay = typeof todayDay !== 'undefined' ? todayDay : maxDay;
+    %>
+    
+    <% for (let i = 0; i < 13; i++) { %>
+      <% 
+         const effectiveDay = 26 + i; // 26, 27 ... 38
+         const locked = effectiveDay > maxDay; 
+         const isToday = effectiveDay === _todayDay;
+         const st = (statusByDay && statusByDay[effectiveDay]) || {attempted:false, correct:false};
+         const info = getDayInfo(effectiveDay);
+         const isJan = effectiveDay > 31;
+      %>
+
+      <div class="day <%= locked ? 'locked' : '' %> <%= isToday ? 'highlighted' : '' %>">
         <% if (!locked) { %>
-          <a class="legacy-pill" href="/questions?day=<%= d %>">
-            <%= t ? t('questions.day', { n: d }) : `Day ${d}` %>
+          <a class="legacy-pill <%= isJan ? 'new-year-glow' : '' %>" href="/questions?day=<%= effectiveDay %>" title="<%= info.full %>">
+            <div class="date-col">
+              <span class="d-num">
+                <%= info.day %>
+              </span>
+              <span class="d-mon"><%= info.month %></span>
+            </div>
+            
             <% if (st.attempted) { %>
-              <% if (st.correct) { %> ✅ <% } else { %> ✖ <% } %>
+              <div class="status-icon">
+                <% if (st.correct) { %> ✅ <% } else { %> ✖ <% } %>
+              </div>
             <% } %>
           </a>
         <% } else { %>
-          <span class="legacy-pill"><%= t ? t('questions.day', { n: d }) : `Day ${d}` %> 🔒</span>
+          <span class="legacy-pill locked-pill">
+            <div class="date-col">
+              <span class="d-num"><%= info.day %></span>
+              <span class="d-mon"><%= info.month %></span>
+            </div>
+            <div class="status-icon">🔒</div>
+          </span>
         <% } %>
       </div>
     <% } %>
@@ -94,11 +133,18 @@
 </div>
 
 <style>
-  .callout { border:1px solid #29455f; border-radius:12px; padding:14px; margin:10px 0 14px; background:#0f2236; }
-  .callout-head { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
-  .chips { display:flex; gap:6px; }
-  .chip { display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px; font-size:12px; border:1px solid #35506b; background:#0e2032; color:#eaf4ff; }
-  .chip.ok { border-color:#2ecc71; }
-  .chip.warn { border-color:#f1c40f; }
-  .chip.info { border-color:#4f6d8c; }
+ /* (Стили те же самые, что я присылал ранее) */
+ .callout { border:1px solid #29455f; border-radius:12px; padding:14px; margin:10px 0 14px; background:#0f2236; }
+ .callout-head { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+ .chips { display:flex; gap:6px; }
+ .chip { display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px; font-size:12px; border:1px solid #35506b; background:#0e2032; color:#eaf4ff; }
+ .chip.ok { border-color:#2ecc71; }
+ .chip.warn { border-color:#f1c40f; }
+ .chip.info { border-color:#4f6d8c; }
+ .legacy-pill { display: flex !important; flex-direction: column !important; justify-content: center; align-items: center; line-height: 1.1 !important; padding: 4px !important; }
+ .date-col { display: flex; flex-direction: column; align-items: center; }
+ .d-num { font-size: 1.4em; font-weight: 700; }
+ .d-mon { font-size: 0.65em; text-transform: uppercase; opacity: 0.9; white-space: nowrap; }
+ .status-icon { font-size: 0.8em; margin-top: 2px; }
+ .locked-pill { display: flex !important; flex-direction: column !important; justify-content: center; align-items: center; filter: grayscale(.4); opacity:.7; }
 </style>
