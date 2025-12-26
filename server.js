@@ -1,5 +1,3 @@
-const dns = require('dns');
-dns.setDefaultResultOrder('ipv4first');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
@@ -49,23 +47,39 @@ console.log('Admins:', ADMINS);
 
 // 3. Helpers & Middleware
 function unlockedMaxDay() {
-  if (DEV_MODE === '1') return 25; // DEV: все открыто
+  if (DEV_MODE === '1') return 38; // В DEV открыто всё до 7 января
 
   const now = new Date();
-  if (now.getFullYear() < 2025) return 0;
-  if (now.getFullYear() > 2025) return 25;
-  if (now.getMonth() < 11) return 0;
-  if (now.getMonth() > 11) return 25;
-
-  const day = now.getDate();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const date = now.getDate();
   const hour = now.getHours();
 
-  if (day < 1) return 0;
-  if (day > 25) return 25;
+  if (year < 2025) return 0;
+  if (year === 2025 && month < 11) return 0;
+  if (year === 2025 && month === 11 && date < 26) return 0;
 
-  // Накопительное открытие: если час не настал, открыт предыдущий день
-  const opened = hour >= OPEN_LOCAL_HOUR ? day : (day - 1);
-  return Math.max(0, Math.min(opened, 25));
+  let currentDbDay = 0;
+
+  if (year === 2025 && month === 11) {
+    // 26 дек -> 26 ... 31 дек -> 31
+    currentDbDay = date;
+  } else if (year === 2026 && month === 0) {
+    // 1 янв -> 32 ... 7 янв -> 38
+    currentDbDay = 31 + date;
+  } else if (year >= 2026) {
+    return 38;
+  }
+
+  // Границы
+  if (currentDbDay < 26) return 0; 
+  if (currentDbDay > 38) return 38;
+
+  // Проверка времени
+  const opened = hour >= OPEN_LOCAL_HOUR ? currentDbDay : (currentDbDay - 1);
+  
+  // Если еще не открылся 26-й день из-за времени, возвращаем 0
+  return Math.max(0, Math.min(opened, 38));
 }
 
 function ensureAuth(req, res, next) {
@@ -113,17 +127,21 @@ async function initDb() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
       UNIQUE(user_id, question_id)
     );
+
+    CREATE TABLE IF NOT EXISTS page_visits (
+      page_key TEXT PRIMARY KEY,
+      count INTEGER DEFAULT 0
+    );
   `);
 
   // Seed Correct Answers
-  const correctMap = {
-    1:2, 2:0, 3:2, 4:2, 5:3, 6:1, 7:1, 8:0, 9:1, 10:1,
-    11:1, 12:2, 13:1, 14:1, 15:2, 16:0, 17:0, 18:1, 19:2, 20:3,
-    21:2, 22:0, 23:2, 24:0, 25:1
-  };
+const correctMap = {
+  26:0, 27:3, 28:1, 29:2, 30:0, 31:3, // Декабрь 26-31
+  32:1, 33:0, 34:2, 35:1, 36:3, 37:0, 38:2 // Январь 1-7
+};
 
-  // Upsert questions (day 1..25)
-  for (let d = 1; d <= 25; d++) {
+  // Upsert questions (day 1..38) <--- ИЗМЕНИЛИ ЦИКЛ
+  for (let d = 1; d <= 38; d++) {
     const idx = correctMap[d] ?? 1;
     await pool.query(`
       INSERT INTO questions (day, q_key, correct_index, text, answer)
@@ -137,7 +155,6 @@ async function initDb() {
 
 // 5. App Setup
 const app = express();
-app.set('trust proxy', 1);
 
 app.use(helmet({
   contentSecurityPolicy: {
@@ -176,6 +193,8 @@ app.use(i18nextMiddleware.handle(i18next));
 
 // --- Page Counter Middleware (Page + Lang) ---
 app.use(async (req, res, next) => {
+
+  
   // Игнорируем API, админку, статику (файлы с точкой)
   if (req.method !== 'GET' || 
       req.path.startsWith('/api') || 
@@ -222,6 +241,8 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+
+
 // Global Middleware
 app.use((req, res, next) => {
   if (!req.session.csrfToken) req.session.csrfToken = crypto.randomBytes(24).toString('hex');
@@ -235,7 +256,8 @@ app.use((req, res, next) => {
   res.locals.lng = req.language || 'en';
   res.locals.path = req.path;
   res.locals.ADMINS = ADMINS;
-  res.locals.visits = res.locals.visits || 0;
+  res.locals.visits = res.locals.visits || 0; 
+
   if (typeof res.locals.bodyClass === 'undefined') res.locals.bodyClass = '';
   
   next();
@@ -357,7 +379,7 @@ app.get('/questions', async (req, res, next) => {
     if (selectedDay < 1 || selectedDay > maxDay) selectedDay = maxDay;
 
     const statusByDay = {};
-    for (let d = 1; d <= 25; d++) statusByDay[d] = { attempted: false, correct: false };
+    for (let d = 1; d <= 38; d++) statusByDay[d] = { attempted: false, correct: false };
 
     if (req.user) {
       const r = await pool.query(`
@@ -374,7 +396,7 @@ app.get('/questions', async (req, res, next) => {
     let selected = null, attempted = false, alreadyCorrect = false;
     let qKey = null, correctIndex = 1, fallbackOptions = [];
 
-    if (selectedDay >= 1 && selectedDay <= 25) {
+    if (selectedDay >= 1 && selectedDay <= 38) {
       const qr = await pool.query(`SELECT id, day, q_key, correct_index FROM questions WHERE day = $1`, [selectedDay]);
       selected = qr.rows[0] || null;
 
@@ -412,7 +434,7 @@ app.post('/questions/submit', ensureAuth, async (req, res, next) => {
   const choice = Number(req.body.choice);
   const maxDay = unlockedMaxDay();
 
-  if (!day || day < 1 || day > 25) {
+  if (!day || day < 1 || day > 38) {
     req.session.toast = { type: 'warn', text: req.t('toasts.dayInvalid') };
     return res.redirect('/questions');
   }
