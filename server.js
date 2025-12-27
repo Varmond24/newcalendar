@@ -155,7 +155,7 @@ const correctMap = {
 
 // 5. App Setup
 const app = express();
-
+app.set('trust proxy', 1);
 app.use(helmet({
   contentSecurityPolicy: {
     useDefaults: true,
@@ -227,14 +227,19 @@ app.use(async (req, res, next) => {
 
 // Session (Postgres store)
 app.use(session({
-  store: new PgSession({ pool, createTableIfMissing: true }),
+  store: new PgSession({ 
+    pool, 
+    createTableIfMissing: true,
+    tableName: 'session' // Явно укажем имя таблицы
+  }),
   secret: process.env.SESSION_SECRET || 'dev-secret',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production', 
-    httpOnly: true, 
-    sameSite: 'lax'
+    secure: true, // Для HTTPS обязательно true
+    httpOnly: true,
+    sameSite: 'lax', // 'none' иногда глючит в Safari, 'lax' надежнее для навигации
+    maxAge: 30 * 24 * 60 * 60 * 1000 // 30 дней
   },
 }));
 
